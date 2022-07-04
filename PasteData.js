@@ -308,6 +308,20 @@ const PasteFilter = {
       ErrorLogTrace('LoopMethod', err.message);
     }
   },
+  remoe_empty: function (i) {
+    const divs = this.DOM.querySelectorAll('*');
+    console.log(divs);
+    Array.from(divs).forEach((div, idx, arr) => {
+      if (!div.innerHTML) return;
+      if (div.innerHTML === '') {
+        while (div.parentElement && div.parentElement.innerHTML !== '') {
+          div = div.parentElement;
+          if (!div) break;
+        }
+        div.remove();
+      }
+    });
+  },
   fire: function (data, Option) {
     try {
       this.Option = Option = Option ? Option : { event_from: null };
@@ -325,6 +339,7 @@ const PasteFilter = {
       if (this.DOM.childNodes.length > 0) {
         //this.valid_xref();
         this.LoopMethod(this.DOM);
+        this.remoe_empty(0);
         var tempData = this.DOM.innerHTML.trim();
         this.DOM.innerHTML = '';
         this.Record(data, tempData);
@@ -411,16 +426,16 @@ const PasteFilter = {
       let area = this.Option && this.Option.query ? 'QUERY' : 'EDITOR';
       var Paste_Json = {
         tbl: 'PasteLogs',
-        docid: DOC_ID,
+        docid: 'DOC_ID',
         raw_data: rawData,
         filter_data: filterData,
         Area: area,
-        user: USER_INFO.MAIL_ID,
+        user: 'USER_INFO.MAIL_ID',
         _r: ['5af956974b4bb40a34648f8e'],
         _w: ['5af956974b4bb40a34648f8e'],
         status: this.ErrorEvent ? 'error' : 'pass',
       };
-      commonfn.callajax(Paste_Json, 'Paste_DB_Record', API_UPDATE_INSERT, this);
+      //commonfn.callajax(Paste_Json, 'Paste_DB_Record', API_UPDATE_INSERT, this);
     } catch (err) {
       console.warn(err.message);
       ErrorLogTrace('Paste_Record', err.message);
@@ -431,6 +446,6 @@ const PasteFilter = {
 var ErrorLogTrace = function (para1, para11) {
   console.log('ErrorLogTrace');
 };
-console.log(DATA);
-
-Div.innerHTML = PasteFilter.fire(DATA, { event_from: 'shortcut' });
+var DataFilter = PasteFilter.fire(DATA, { event_from: 'shortcut' });
+console.log(DataFilter);
+Div.innerHTML = DataFilter;
