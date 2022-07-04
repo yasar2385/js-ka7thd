@@ -1,8 +1,7 @@
 // Import stylesheets
 import './style.css';
 import './PasteData.js';
-import './paste.js';
-
+import $ from 'jquery';
 // Write Javascript code!
 const appDiv = document.getElementById('app');
 appDiv.innerHTML = `<h1>JS Starter</h1>`;
@@ -20,8 +19,3 @@ q.innerHTML = text;
 appDiv.appendChild(q);
 console.log(q.innerHTML);
 console.log(text.split('--'));
-
-var Div = document.getElementById('PasteData');
-//console.log(DATA);
-
-//Div.innerHTML = PasteFilter.fire(DATA, { event_from: 'shortcut' });
