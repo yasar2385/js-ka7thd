@@ -311,12 +311,7 @@ const PasteFilter = {
   remoe_empty: function (divs) {
     console.log(divs);
     Array.from(divs).forEach((div, idx, arr) => {
-      if (!div.innerHTML) return;
       if (div.innerHTML === '') {
-        while (div.parentElement && div.parentElement.innerHTML !== '') {
-          div = div.parentElement;
-          if (!div) break;
-        }
         div.remove();
       }
     });
@@ -339,9 +334,13 @@ const PasteFilter = {
         //this.valid_xref();
         this.LoopMethod(this.DOM);
         var divs = this.DOM.querySelectorAll('span>span,div>div,div>span');
+        let loop = 0;
         while (divs.length > 0) {
           this.remoe_empty(divs);
           divs = this.DOM.querySelectorAll('span>span,div>div,div>span');
+          loop++;
+          if (loop > 10) break;
+          else console.log(loop);
         }
         var tempData = this.DOM.innerHTML.trim();
         this.DOM.innerHTML = '';
