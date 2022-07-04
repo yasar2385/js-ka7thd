@@ -1,4 +1,3 @@
-import './paste.js';
 import $ from 'jquery';
 
 var Div = document.getElementById('PasteData');
