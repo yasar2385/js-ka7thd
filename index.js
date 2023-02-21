@@ -9,7 +9,7 @@ const appDiv = document.getElementById('app');
 appDiv.innerHTML = `<h1>JS Starter</h1>`;
 var DATA = '';
 var p = document.createElement('p');
-
+var IS_LOCAL_HOST = true;
 var text =
   '<!--td {border: 1px solid #ccc;}br {mso-data-placement:same-cell;}-->';
 p.textContent = text;
@@ -21,6 +21,32 @@ q.innerHTML = text;
 appDiv.appendChild(q);
 console.log(q.innerHTML);
 console.log(text.split('--'));
+var ErrorLogTrace = function (param1, param2) {
+  console.warn(param1);
+};
+String.prototype.replaceAllSplit = function (search, replacement) {
+  var target = this;
+  var loop = 0;
+  while (target.indexOf(search)) {
+      target = target.split(search).join(replacement);
+      if (loop > 10) {
+          break;
+      } else loop++;
+  }
+  return target;
+};
+String.prototype.replaceAllregrex = function (search, replacement) {
+  var target = this;
+  var loop = 0;
+  while (target.indexOf(search)) {
+      target = target.replace(new RegExp(search, 'g'), replacement);
+      if (loop > 10) {
+          break;
+      } else loop++;
+  }
+  return target;
+};
+
 
 const PasteFilter = {
   formatTagArr: [
@@ -97,9 +123,9 @@ const PasteFilter = {
         );
       }
     } catch (err) {
-      this.ErrorEvent = true;
+      _.ErrorEvent = true;
       console.warn(err.message);
-      //ErrorLogTrace('removeAttr', err.message);
+      ErrorLogTrace('removeAttr', err.message);
     }
   },
   check_NSNB: function (NODE, _) {
@@ -108,7 +134,7 @@ const PasteFilter = {
       var loop = 0;
       var IsElm = NODE.nodeType == 1 ? true : false;
       var value = IsElm ? NODE.innerHTML : NODE.nodeValue;
-      this.replace_empty_values.forEach((item, idx, arr) => {
+      _.replace_empty_values.forEach((item, idx, arr) => {
         while (value.indexOf(item) > 0) {
           value = value.split(item).join(' ');
           if (IsElm) NODE.innerHTML = value;
@@ -123,7 +149,7 @@ const PasteFilter = {
         let dom = document.createElement('span');
         dom.innerHTML = value;
         if (
-          this.empty_values.includes(dom.textContent) ||
+          _.empty_values.includes(dom.textContent) ||
           dom.textContent != value ||
           (dom.firstChild.nodeType == 8 && dom.children.length == 0)
         ) {
@@ -132,9 +158,9 @@ const PasteFilter = {
       }
       return value;
     } catch (err) {
-      this.ErrorEvent = true;
+      _.ErrorEvent = true;
       console.warn(err.message);
-      //ErrorLogTrace('check_NSNB', err.message);
+      ErrorLogTrace('check_NSNB', err.message);
     }
   },
   IsCitationAvailable: false,
@@ -142,20 +168,20 @@ const PasteFilter = {
     _ = PasteFilter;
     try {
       var IsEmtpy =
-        this.empty_values.includes(NODE.innerHTML) ||
-        this.empty_values.includes(NODE.textContent);
+        _.empty_values.includes(NODE.innerHTML) ||
+        _.empty_values.includes(NODE.textContent);
       var Parent = NODE.parentElement;
       // ? 16_NOV_22 -
-      if (Parent && this.eventhandler != 'copy') {
-        NODE.outerHTML = IsEmtpy ? this.SPACE : this.check_NSNB(NODE);
-        if (Parent.innerHTML == this.SPACE) Parent.outerHTML = this.SPACE;
+      if (Parent && _.eventhandler != 'copy') {
+        NODE.outerHTML = IsEmtpy ? _.SPACE : _.check_NSNB(NODE);
+        if (Parent.innerHTML == _.SPACE) Parent.outerHTML = _.SPACE;
       } else if (IsEmtpy) {
         NODE.remove();
       }
     } catch (err) {
-      this.ErrorEvent = true;
+      _.ErrorEvent = true;
       console.warn(err.message + NODE.innerHTML);
-      //ErrorLogTrace('InnerHTML', err.message + NODE.innerHTML);
+      ErrorLogTrace('InnerHTML', err.message + NODE.innerHTML);
     }
   },
   node2Text: function (el, _) {
@@ -236,10 +262,10 @@ const PasteFilter = {
         _.checkRemoveAttrivute(el);
       } else if (
         ['a'].includes(tag) &&
-        !['query'].includes(this.eventhandler) &&
-        !['copy'].includes(this.e.name)
+        !['query'].includes(_.eventhandler) &&
+        !['copy'].includes(_.e.name)
       ) {
-        let validate = this.valid_xref();
+        let validate = _.valid_xref();
         if (el.hasAttribute('rid') && validate) {
           let r = s4();
           commonMethods.SET_REMOVE_ATTR(
@@ -250,13 +276,13 @@ const PasteFilter = {
             ['zrid', 'ztxt']
           );
           if (
-            [/* 'shortcut', */ 'query'].includes(this.eventhandler) ||
-            ['copy'].includes(this.e.name)
+            [/* 'shortcut', */ 'query'].includes(_.eventhandler) ||
+            ['copy'].includes(_.e.name)
           )
             return;
-          this.IsCitationAvailable =
+          _.IsCitationAvailable =
             el.getAttribute('ref-type') == 'bibr' ? true : false;
-          this.Paste_Cite = {
+          _.Paste_Cite = {
             id: r,
             rid: el.getAttribute('rid'),
             type: el.getAttribute('ref-type'),
@@ -266,16 +292,16 @@ const PasteFilter = {
         _.Check_InnerHTML(el);
       }
     } catch (err) {
-      this.ErrorEvent = true;
+      _.ErrorEvent = true;
       console.warn(err.message);
-      //ErrorLogTrace('node2Text', err.message + el.innerHTML);
+      ErrorLogTrace('node2Text', err.message + el.innerHTML);
     }
   },
   checkRemoveAttrivute: function (el, _) {
     _ = PasteFilter;
     try {
       if (el.getAttribute('style') !== null) {
-        this.removeAttr(el);
+        _.removeAttr(el);
       }
       let loop = 1;
       while (el.attributes.length > 1) {
@@ -285,7 +311,7 @@ const PasteFilter = {
             (!['style', 'data-name', 'href', 'target', 'rel', 'id'].includes(
               attrib.name
             ) &&
-              this.Option.query) ||
+              _.Option.query) ||
             attrib.name != 'style'
           ) {
             el.removeAttribute(attrib.name);
@@ -296,9 +322,9 @@ const PasteFilter = {
       }
       if (el.getAttribute('style') == null) _.Check_InnerHTML(el);
     } catch (err) {
-      this.ErrorEvent = true;
+      _.ErrorEvent = true;
       console.warn(err.message);
-      //ErrorLogTrace('checkRemoveAttrivute', err.message);
+      ErrorLogTrace('checkRemoveAttrivute', err.message);
     }
   },
   LoopMethod: function (element, _) {
@@ -324,9 +350,9 @@ const PasteFilter = {
         }
       });
     } catch (err) {
-      this.ErrorEvent = true;
+      _.ErrorEvent = true;
       console.warn(err.message);
-      //ErrorLogTrace('LoopMethod', err.message);
+      ErrorLogTrace('LoopMethod', err.message);
     }
   },
   css_to_text: function (el, _) {
@@ -370,13 +396,13 @@ const PasteFilter = {
       }
     } catch (err) {
       console.warn(err.message);
-      //ErrorLogTrace('css_to_text', el.outerHTML + '>--->' + err.message);
+      ErrorLogTrace('css_to_text', el.outerHTML + '>--->' + err.message);
     }
   },
   remove_empty: function (Options = {}, _) {
     _ = this;
     try {
-      if (['copy', 'docStatics'].includes(this.e.name)) {
+      if (['copy', 'docStatics'].includes(_.e.name)) {
         let removeItem = commonMethods.removeHiddenItems.clean.split(',');
         removeItem.shift();
         Array.from([
@@ -384,7 +410,7 @@ const PasteFilter = {
           commonMethods.removeHiddenItems.copy_clean,
           commonMethods.removeHiddenItems.copy,
         ]).forEach((find, index, array) => {
-          this.DOM.querySelectorAll(find).forEach((el, idx, arr) => {
+          _.DOM.querySelectorAll(find).forEach((el, idx, arr) => {
             if ([0, 1].includes(index)) {
               // ? return journal front matter meta elements only need to remove || not in reference part (e.g. 'del, .pub-date, .history, .permissions, .volume, .issue, .fpage, .lpage')
               if (index == 1 && el.closest('.ref') && el.tagName != 'DEL')
@@ -396,11 +422,11 @@ const PasteFilter = {
           });
         });
         // ? LABEL SPLIT FROM TITLE
-        this.DOM.querySelectorAll('div.ref span.label').forEach((el) => {
+        _.DOM.querySelectorAll('div.ref span.label').forEach((el) => {
           el.firstChild.textContent = el.firstChild.textContent.concat('', ' ');
         });
       }
-      var divs = this.DOM.querySelectorAll('span,div,p,td,th,a,input');
+      var divs = _.DOM.querySelectorAll('span,div,p,td,th,a,input');
       Array.from(divs).forEach((el, idx, arr) => {
         if (el.textContent === '') {
           if (el.parentElement.textContent === '') el.parentElement.remove();
@@ -413,7 +439,7 @@ const PasteFilter = {
       });
     } catch (err) {
       console.warn(err.message);
-      //ErrorLogTrace('remove_empty', err.message);
+      ErrorLogTrace('remove_empty', err.message);
     }
   },
   GET_SET_CURSOR: function (el, Option) {
@@ -448,7 +474,7 @@ const PasteFilter = {
       }
     } catch (err) {
       console.warn(err.message);
-      //ErrorLogTrace('GET_SET_CURSOR', err.message);
+      ErrorLogTrace('GET_SET_CURSOR', err.message);
     }
   },
   Update_Selection: function (filterData) {
@@ -482,7 +508,7 @@ const PasteFilter = {
       }
     } catch (err) {
       console.warn(err.message);
-      //ErrorLogTrace('Update_Selection', err.message);
+      ErrorLogTrace('Update_Selection', err.message);
     }
   },
   Get_Set_PasteData: function (event) {
@@ -501,7 +527,7 @@ const PasteFilter = {
       return paste_Data;
     } catch (err) {
       console.warn(err.message);
-      //ErrorLogTrace('get_PasteData', err.message);
+      ErrorLogTrace('get_PasteData', err.message);
     }
   },
   fire: function (data, Option, _) {
@@ -521,16 +547,17 @@ const PasteFilter = {
           getData: true,
         });
       }
+      console.log('_.e.name' + _.e);
       let sel = document.getSelection();
       let IsWindowSelection = sel.toString().length > 0 ? true : false;
       if (typeof data == 'string') {
         if (
           data.match(/&lt|&gt|&quot|x3C/) &&
-          !['copy', 'docStatics'].includes(this.e.name)
+          !['copy', 'docStatics'].includes(_.e.name)
         ) {
           // ? 02-jul-22
-          for (let tag in this.tagsAsString) {
-            data = data.replaceAllSplit(tag, this.tagsAsString[tag]);
+          for (let tag in _.tagsAsString) {
+            data = data.replaceAllSplit(tag, _.tagsAsString[tag]);
           }
         }
         var frag = document.createRange().createContextualFragment(data);
@@ -543,7 +570,7 @@ const PasteFilter = {
         // return  (IsWindowSelection) ? _.Update_Selection(text) :  text;
       }
       if (_.DOM.childNodes.length > 0) {
-        //this.valid_xref();
+        //_.valid_xref();
         reTurnData = data;
         // ? 17_NOV_22 COPT - PASTE - DATA FILTTER METHOD -  YA
         if (['copy', 'docStatics'].includes(_.e.name)) {
@@ -574,7 +601,7 @@ const PasteFilter = {
     } catch (err) {
       console.warn(err.message);
       _.Record(data, '');
-      //ErrorLogTrace(
+      ErrorLogTrace(
         'OnPaste_fire',
         err.message + '-data-' + data + '-Options-' + JSON.stringify(Option)
       );
@@ -583,7 +610,7 @@ const PasteFilter = {
   valid_xref: function () {
     try {
       let missing = [];
-      this.DOM.querySelectorAll('a.xref').forEach((el) => {
+      _.DOM.querySelectorAll('a.xref').forEach((el) => {
         let rid = el.getAttribute('rid');
         rid.split(' ').forEach((id) => {
           if (GlobalEditor.document.find(`#${id}`)) {
@@ -594,7 +621,7 @@ const PasteFilter = {
       return missing.length && !iREF_SCOPE.IS_NAME_DATE > 0 ? false : true;
     } catch (err) {
       console.warn(err.message);
-      //ErrorLogTrace('valid_xref', err.message);
+      ErrorLogTrace('valid_xref', err.message);
     }
   },
   after_paste_check_citation: function (_id) {
@@ -602,20 +629,20 @@ const PasteFilter = {
       /** 
               @params {_id} for pasted xref id
           */
-      _id = this.Paste_Cite ? this.Paste_Cite.id : null;
-      this.A_DOM = document.getElementById('aaa');
+      _id = _.Paste_Cite ? _.Paste_Cite.id : null;
+      _.A_DOM = document.getElementById('aaa');
       var gData = GlobalEditor.getData();
       let XREFS_LIST = GlobalEditor.document.find(`[data-paste-id="${_id}"]`).$
         .length;
-      $(this.A_DOM).html('').append(gData);
-      if (this.IsCitationAvailable) {
+      $(_.A_DOM).html('').append(gData);
+      if (_.IsCitationAvailable) {
         IMPACT_SELECTION._SNAPSHOT({
           lock: true,
           SAVE: true,
         });
         //tempElm.classList.add('active'); tempElm is not defined
         let rData = CitationNewModule['M_FUN'].CHECK_REF_CITATION_SEQUENCE(
-          this.A_DOM,
+          _.A_DOM,
           {
             del_id: null,
             reorder: true,
@@ -639,27 +666,26 @@ const PasteFilter = {
       }
     } catch (err) {
       console.warn(err.message);
-      //ErrorLogTrace('after_paste_check_citation', err.message);
+      ErrorLogTrace('after_paste_check_citation', err.message);
     }
   },
   Paste_DB_Record: function (response) {
     var STRINGY = JSON.stringify(response);
     try {
       console.info(response);
-      if (response.r == 0) //ErrorLogTrace('Paste_DB_Record_Response', STRINGY);
+      //if (response.r == 0) ErrorLogTrace('Paste_DB_Record_Response', STRINGY);
     } catch (err) {
       console.warn(err.message);
-      //ErrorLogTrace('Paste_DB_Record', err.message + STRINGY);
+      ErrorLogTrace('Paste_DB_Record', err.message + STRINGY);
     }
   },
   histroy: {},
   Record: function (rawData, filterData) {
     try {
       if (IS_LOCAL_HOST) return;
-      if (this.histroy[filterData] && this.histroy[filterData] == rawData)
-        return;
-      else this.histroy[filterData] = rawData;
-      let area = this.Option && this.Option.query ? 'QUERY' : 'EDITOR';
+      if (_.histroy[filterData] && _.histroy[filterData] == rawData) return;
+      else _.histroy[filterData] = rawData;
+      let area = _.Option && _.Option.query ? 'QUERY' : 'EDITOR';
       var Paste_Json = {
         tbl: 'PasteLogs',
         docid: DOC_ID,
@@ -669,20 +695,23 @@ const PasteFilter = {
         user: USER_INFO.MAIL_ID,
         _r: ['5af956974b4bb40a34648f8e'],
         _w: ['5af956974b4bb40a34648f8e'],
-        status: this.ErrorEvent ? 'error' : 'pass',
+        status: _.ErrorEvent ? 'error' : 'pass',
       };
       commonfn.callajax(Paste_Json, 'Paste_DB_Record', API_UPDATE_INSERT, this);
     } catch (err) {
       console.warn(err.message);
-      //ErrorLogTrace('Paste_Record', err.message);
+      ErrorLogTrace('Paste_Record', err.message);
     }
   },
   test1: function () {},
 };
 setTimeout(() => {
   console.log(DATA);
-
-  var DataFilter = PasteFilter.fire(DATA, { event_from: 'shortcut' });
+  var Div = document.getElementById('PasteData');
+  var DataFilter = PasteFilter.fire(DATA, {
+    event_from: 'shortcut',
+    e: { name: 'paste' },
+  });
   console.log(DataFilter);
   Div.innerHTML = DataFilter;
 }, 2500);
