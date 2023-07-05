@@ -12,26 +12,38 @@ var p = document.createElement('p');
 var IS_LOCAL_HOST = true;
 var text =
   '<!--td {border: 1px solid #ccc;}br {mso-data-placement:same-cell;}-->';
-p.textContent = text;
 
+var text1 = `"<html>
+<body>
+<!--StartFragment--><meta charset="utf-8"><b style="font-weight:normal;" id="docs-internal-guid-85b16c03-7fff-04a2-a9ba-ad883bd02334"><p dir="ltr" style="line-height:1.38;margin-top:0pt;margin-bottom:0pt;"><span style="font-size:12pt;font-family:Verdana;color:#000000;background-color:transparent;font-weight:400;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;">CLEANE</span><span style="font-size:12pt;font-family:Verdana;color:#000000;background-color:transparent;font-weight:400;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;"><span class="Apple-tab-span" style="white-space:pre;">	</span></span><span style="font-size:12pt;font-family:Verdana;color:#000000;background-color:transparent;font-weight:700;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;">Clean Energy</span></p></b><br class="Apple-interchange-newline"><!--EndFragment-->
+</body>
+</html>"`;
+console.log('---------------');
+
+//console.log(text1);
+text1 = text1.replace(/\x3c!--(?:Start|End)Fragment--\x3e/g, '');
+text1 = text1.replace(/<meta.*?>/i, '');
+//text1 = text1.replace(/<body(?:[\s\S]*?)>([\s\S]*)<\/body>/i,'');
+//console.log(text1.match(/<body(?:[\s\S]*?)>([\s\S]*)<\/body>/i));
+console.log(text1);
+p.textContent = text1;
 appDiv.appendChild(p);
-
 var q = document.createElement('span');
 q.innerHTML = text;
 appDiv.appendChild(q);
-console.log(q.innerHTML);
-console.log(text.split('--'));
+//console.log(q.innerHTML);
+//console.log(text.split('--'));
 var ErrorLogTrace = function (param1, param2) {
-  console.warn(param1);
+  //console.warn(param1);
 };
 String.prototype.replaceAllSplit = function (search, replacement) {
   var target = this;
   var loop = 0;
   while (target.indexOf(search)) {
-      target = target.split(search).join(replacement);
-      if (loop > 10) {
-          break;
-      } else loop++;
+    target = target.split(search).join(replacement);
+    if (loop > 10) {
+      break;
+    } else loop++;
   }
   return target;
 };
@@ -39,14 +51,13 @@ String.prototype.replaceAllregrex = function (search, replacement) {
   var target = this;
   var loop = 0;
   while (target.indexOf(search)) {
-      target = target.replace(new RegExp(search, 'g'), replacement);
-      if (loop > 10) {
-          break;
-      } else loop++;
+    target = target.replace(new RegExp(search, 'g'), replacement);
+    if (loop > 10) {
+      break;
+    } else loop++;
   }
   return target;
 };
-
 
 const PasteFilter = {
   formatTagArr: [
@@ -706,13 +717,13 @@ const PasteFilter = {
   test1: function () {},
 };
 setTimeout(() => {
-  console.log(DATA);
+  //console.log(DATA);
   var Div = document.getElementById('PasteData');
   var DataFilter = PasteFilter.fire(DATA, {
     event_from: 'shortcut',
     e: { name: 'paste' },
   });
-  console.log(DataFilter);
+  //console.log(DataFilter);
   Div.innerHTML = DataFilter;
 }, 2500);
 
